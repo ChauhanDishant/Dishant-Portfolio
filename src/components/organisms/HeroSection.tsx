@@ -2,8 +2,12 @@ import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { HexagonalFrame, NeonButton } from "@/components/atoms";
 import { fadeInUp, fadeInDown, staggerContainer } from "@/utils/helpers";
-import PersonalPhoto from "./../../assets/images/Personal Photo.jpeg";
-import "./../../styles/main.css";
+import "../../styles/main.css";
+
+const PersonalPhoto = new URL(
+  "../../assets/images/Personal Photo.jpeg",
+  import.meta.url,
+).href;
 
 /**
  * Particle system for hero background

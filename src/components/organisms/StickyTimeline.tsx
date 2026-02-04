@@ -208,7 +208,7 @@ export const StickyTimeline = React.memo<StickyTimelineProps>(
         </div>
 
         {/* Custom scrollbar styles - Add to your global CSS */}
-        <style jsx>{`
+        <style>{`
           /* Custom scrollbar for WebKit browsers (Chrome, Safari, Edge) */
           div::-webkit-scrollbar {
             width: 8px;

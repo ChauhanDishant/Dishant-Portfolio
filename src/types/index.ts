@@ -1,4 +1,5 @@
 // Core type definitions for the portfolio
+import type { Variants } from "framer-motion";
 
 export interface GitHubRepository {
   id: number;
@@ -21,7 +22,7 @@ export interface Experience {
   period: string;
   startDate: string;
   endDate: string | null;
-  type: 'current' | 'internship';
+  type: "current" | "internship";
   description: string;
   highlights: string[];
   technologies: string[];
@@ -61,11 +62,7 @@ export interface SocialLink {
   description: string;
 }
 
-export interface AnimationVariant {
-  hidden: Record<string, unknown>;
-  visible: Record<string, unknown>;
-  [key: string]: unknown;
-}
+export type AnimationVariant = Variants;
 
 export interface CursorPosition {
   x: number;
