@@ -1,15 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Custom fonts from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
 @layer base {
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-deep-slate text-white font-body;
     cursor: none; /* Hide default cursor for custom cursor */
