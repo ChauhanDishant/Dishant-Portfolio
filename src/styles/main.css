@@ -1,3 +1,13 @@
 .image-position {
   object-position: center 10%;
 }
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}

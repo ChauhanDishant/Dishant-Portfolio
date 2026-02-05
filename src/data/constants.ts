@@ -67,7 +67,7 @@ export const PROJECTS: Project[] = [
     id: "workguru",
     title: "WorkGuru – Business & Workforce Management System",
     description:
-      "A full-stack business and workforce management application that helps small and medium-scale businesses manage workers, attendance, loans, inventory, clients, orders, and invoices from a single platform.",
+      "A Mern-stack business and workforce management application that helps small and medium-scale businesses manage workers, attendance, loans, inventory, clients, orders, and invoices from a single platform.",
     longDescription:
       "WorkGuru is designed to replace manual and fragmented record-keeping systems with a centralized digital solution. The application is divided into business management and worker management modules, enabling efficient handling of daily operations such as attendance tracking, loan management, inventory monitoring, and invoice generation.",
     technologies: [
@@ -75,7 +75,6 @@ export const PROJECTS: Project[] = [
       "Node.js",
       "Express",
       "MongoDB",
-      "Mongoose",
       "Tailwind CSS",
       "REST APIs",
     ],
@@ -118,12 +117,33 @@ export const SKILLS_BY_CATEGORY = {
   Frontend: ["React", "TypeScript", "JavaScript", "Tailwind CSS", "Redux"],
   Backend: ["Node.js", "Express", "MySQL", "REST APIs"],
   "Cloud & DevOps": ["AWS (ECR, Lambda, S3, RDS)", "Git", "Swagger"],
-  "Tools & Others": ["Storybook", "Redis (basic concepts)"],
+  "Tools & Others": ["Storybook", "Redis (learning path)"],
 };
 
-export const FEATURED_GITHUB_REPOS = [
-  "WorkGuru",
-  "Homemakers",
-  "Netflix_Clone",
-  "Hostel-Rental-System",
-];
+export const SOCIAL_LINKS = {
+  LinkedIn: {
+    url: "https://www.linkedin.com/in/chauhandishant/",
+  },
+  College: {
+    name: "CHARUSAT",
+    url: "https://www.charusat.ac.in/",
+  },
+  Company: {
+    ThinkBiz: {
+      name: "ThinkBiz Technology Private Ltd.",
+      url: "https://www.linkedin.com/company/thinkbiz-technology-private-limited/",
+    },
+    MiracleTechnoLabs: {
+      name: "Miracle TechnoLabs",
+      url: "https://www.linkedin.com/company/miracle-technolabs/",
+    },
+  },
+  GitHub: {
+    url: "https://github.com/ChauhanDishant",
+  },
+};
+
+export const FORMSPREE_ENDPOINT = "https://formspree.io/f/xkovwqab";
+
+export const TOAST_SUCCESS = "Signal received 📡 I’ll respond shortly.";
+export const TOAST_ERROR = "Something went wrong 🚨 Please try again later.";

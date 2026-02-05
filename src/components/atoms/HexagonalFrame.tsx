@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import type { TiltState } from '@/types';
+import React, { useState, useCallback } from "react";
+import { motion } from "framer-motion";
+import type { TiltState } from "@/types";
 
 interface HexagonalFrameProps {
   children: React.ReactNode;
   size?: number;
-  glowColor?: 'cyan' | 'indigo' | 'gradient';
+  glowColor?: "cyan" | "indigo" | "gradient";
   className?: string;
 }
 
@@ -13,7 +13,7 @@ interface HexagonalFrameProps {
  * Hexagonal frame with glassmorphism, neon glow, and 3D tilt effect
  */
 export const HexagonalFrame = React.memo<HexagonalFrameProps>(
-  ({ children, size = 288, glowColor = 'gradient', className = '' }) => {
+  ({ children, size = 288, glowColor = "gradient", className = "" }) => {
     const [tilt, setTilt] = useState<TiltState>({ x: 0, y: 0 });
 
     const handleMouseMove = useCallback(
@@ -23,25 +23,26 @@ export const HexagonalFrame = React.memo<HexagonalFrameProps>(
         const y = (e.clientY - rect.top) / rect.height - 0.5;
         setTilt({ x: y * 20, y: -x * 20 });
       },
-      []
+      [],
     );
 
     const handleMouseLeave = useCallback(() => {
       setTilt({ x: 0, y: 0 });
     }, []);
 
-    const hexagonClipPath = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
+    const hexagonClipPath =
+      "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)";
 
     const glowStyles = {
-      cyan: 'from-neon-cyan to-neon-cyan',
-      indigo: 'from-neon-indigo to-neon-indigo',
-      gradient: 'from-neon-cyan to-electric-indigo',
+      cyan: "from-neon-cyan to-neon-cyan",
+      indigo: "from-neon-indigo to-neon-indigo",
+      gradient: "from-neon-cyan to-electric-indigo",
     };
 
     return (
       <div
         className={`relative ${className}`}
-        style={{ width: size, height: size, perspective: '1000px' }}
+        style={{ width: size, height: size, perspective: "1000px" }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
@@ -51,9 +52,9 @@ export const HexagonalFrame = React.memo<HexagonalFrameProps>(
             rotateX: tilt.x,
             rotateY: tilt.y,
           }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
           style={{
-            transformStyle: 'preserve-3d',
+            transformStyle: "preserve-3d",
           }}
         >
           {/* Outer glow layer */}
@@ -76,21 +77,6 @@ export const HexagonalFrame = React.memo<HexagonalFrameProps>(
             </div>
 
             {/* Holographic scan line */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{ clipPath: hexagonClipPath }}
-            >
-              <motion.div
-                className="absolute w-full h-1 bg-gradient-to-r from-transparent via-neon-cyan to-transparent opacity-70"
-                style={{ boxShadow: '0 0 20px #06b6d4' }}
-                animate={{ top: ['0%', '100%'] }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'linear',
-                }}
-              />
-            </div>
           </div>
 
           {/* Corner accent dots */}
@@ -107,7 +93,7 @@ export const HexagonalFrame = React.memo<HexagonalFrameProps>(
         </motion.div>
       </div>
     );
-  }
+  },
 );
 
-HexagonalFrame.displayName = 'HexagonalFrame';
+HexagonalFrame.displayName = "HexagonalFrame";
