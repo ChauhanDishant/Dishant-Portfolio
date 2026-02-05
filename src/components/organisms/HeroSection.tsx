@@ -254,6 +254,12 @@ export const HeroSection: React.FC = React.memo(() => {
         className="absolute bottom-12 left-1/2 -translate-x-1/2 cursor-pointer"
         animate={{ y: [0, 10, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
+        onClick={() => {
+          document
+            .getElementById("about")
+            ?.scrollIntoView({ behavior: "smooth" });
+        }}
+        aria-label="Scroll to About section"
       >
         <div className="w-6 h-10 rounded-full border-2 border-neon-cyan/50 flex items-start justify-center p-2">
           <motion.div

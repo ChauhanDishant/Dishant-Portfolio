@@ -4,6 +4,7 @@ import type { Experience } from "@/types";
 import { NeonBadge } from "@/components/atoms";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { fadeInLeft } from "@/utils/helpers";
+import "./../../styles/main.css";
 
 interface TimelineItemProps {
   experience: Experience;
@@ -130,7 +131,7 @@ export const StickyTimeline = React.memo<StickyTimelineProps>(
 
     return (
       <section className="relative py-24 px-6 bg-deep-slate/50">
-        <div className="container mx-auto max-w-4xl">
+        <div className="container mx-auto max-w-5xl">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -148,12 +149,7 @@ export const StickyTimeline = React.memo<StickyTimelineProps>(
               {/* Container with fixed height and custom scrollbar */}
               <div
                 ref={timelineRef}
-                className="relative max-h-[600px] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-neon-cyan/30 scrollbar-track-transparent hover:scrollbar-thumb-neon-cyan/50 scroll-smooth"
-                style={{
-                  // Custom scrollbar styles for browsers that support it
-                  scrollbarWidth: "thin",
-                  scrollbarColor: "rgba(6, 182, 212, 0.3) transparent",
-                }}
+                className="relative max-h-[600px] overflow-y-auto pr-4 scroll-smooth scrollbar-hidden"
               >
                 {/* Timeline line */}
                 <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-slate-700 to-transparent" />

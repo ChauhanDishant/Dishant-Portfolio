@@ -2,25 +2,26 @@ import React from "react";
 import { motion } from "framer-motion";
 import { CustomCursor } from "@/components/atoms";
 import { HeroSection, StickyTimeline } from "@/components/organisms";
-import { ProjectCard, GitHubRepoCard, FormField } from "@/components/molecules";
+import { ProjectCard, FormField } from "@/components/molecules";
 import { NeonButton, NeonBadge } from "@/components/atoms";
-import { useGitHub } from "@/hooks/useGitHub";
 import {
   EXPERIENCES,
   PROJECTS,
   GITHUB_USERNAME,
   SKILLS_BY_CATEGORY,
+  FORMSPREE_ENDPOINT,
+  TOAST_SUCCESS,
+  TOAST_ERROR,
+  SOCIAL_LINKS,
 } from "@/data/constants";
 import { useState, useCallback } from "react";
 import type { ContactFormData, ContactFormErrors } from "@/types";
 import "./index.css";
+import { Navbar } from "./components/organisms/Navbar";
+import { Toaster } from "react-hot-toast";
+import { showToast } from "./utils/toast";
 
 function App() {
-  const { repos, loading: githubLoading } = useGitHub(GITHUB_USERNAME, {
-    sort: "stars",
-    per_page: 6,
-  });
-
   // Contact form state
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
@@ -28,7 +29,7 @@ function App() {
     message: "",
   });
   const [errors, setErrors] = useState<ContactFormErrors>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateField = useCallback(
     (field: keyof ContactFormData, value: string): string => {
@@ -60,44 +61,67 @@ function App() {
     [validateField],
   );
 
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      const newErrors: ContactFormErrors = {};
-      let isValid = true;
+    const newErrors: ContactFormErrors = {};
+    let isValid = true;
 
-      (Object.keys(formData) as Array<keyof ContactFormData>).forEach((key) => {
-        const error = validateField(key, formData[key]);
-        if (error) {
-          newErrors[key] = error;
-          isValid = false;
-        }
+    (Object.keys(formData) as Array<keyof ContactFormData>).forEach((key) => {
+      const error = validateField(key, formData[key]);
+      if (error) {
+        newErrors[key] = error;
+        isValid = false;
+      }
+    });
+
+    setErrors(newErrors);
+    if (!isValid) return;
+
+    try {
+      setIsSubmitting(true);
+
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(formData),
       });
 
-      setErrors(newErrors);
-
-      if (isValid) {
-        setSubmitted(true);
-        setTimeout(() => {
-          setSubmitted(false);
-          setFormData({ name: "", email: "", message: "" });
-        }, 3000);
+      if (!response.ok) {
+        throw new Error("Failed to send message");
       }
-    },
-    [formData, validateField],
-  );
+
+      showToast.success(TOAST_SUCCESS);
+
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+      });
+    } catch (error) {
+      showToast.error(TOAST_ERROR);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-deep-slate text-white overflow-x-hidden">
+      <Toaster position="bottom-right" reverseOrder={false} />
       <CustomCursor />
+
+      {/* Navbar */}
+      <Navbar />
 
       {/* Hero */}
       <HeroSection />
 
       {/* About Section */}
-      <section className="relative py-24 px-6">
-        <div className="container mx-auto max-w-4xl">
+      <section className="relative py-24 px-6" id="about">
+        <div className="container mx-auto max-w-5xl">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -113,9 +137,14 @@ function App() {
             <div className="backdrop-blur-glass bg-glass-white border border-neon-cyan/20 rounded-2xl p-8 lg:p-12">
               <p className="text-lg text-slate-300 leading-relaxed mb-6">
                 I am a B.Tech graduate in Information Technology from{" "}
-                <span className="text-neon-cyan font-semibold">
-                  CHARUSAT University
-                </span>
+                <a
+                  href={SOCIAL_LINKS.College.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-neon-cyan font-semibold transition-colors"
+                >
+                  {SOCIAL_LINKS.College.name}
+                </a>
                 , with a strong foundation in computer science fundamentals and
                 a growing passion for building real-world web applications.
                 During my academic journey, I developed a keen interest in
@@ -125,9 +154,14 @@ function App() {
 
               <p className="text-lg text-slate-300 leading-relaxed mb-6">
                 I am currently working as a Junior Full Stack Developer at{" "}
-                <span className="text-electric-indigo font-semibold">
-                  ThinkBiz Technologies Private Ltd.
-                </span>
+                <a
+                  href={SOCIAL_LINKS.Company.ThinkBiz.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-electric-indigo font-semibold"
+                >
+                  {SOCIAL_LINKS.Company.ThinkBiz.name}
+                </a>
                 , where I contribute to large-scale enterprise web applications.
                 My role involves working across frontend and backend layers,
                 understanding complex systems, debugging production issues, and
@@ -171,7 +205,9 @@ function App() {
       </section>
 
       {/* Experience Timeline */}
-      <StickyTimeline experiences={EXPERIENCES} />
+      <section id="experience">
+        <StickyTimeline experiences={EXPERIENCES} />
+      </section>
 
       {/* Projects Section */}
       <section id="projects" className="relative py-24 px-6">
@@ -192,63 +228,6 @@ function App() {
                 <ProjectCard key={project.id} project={project} index={index} />
               ))}
             </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* GitHub Section */}
-      <section className="relative py-24 px-6 bg-deep-slate/50">
-        <div className="container mx-auto max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-5xl lg:text-6xl font-black mb-16 text-center">
-              <span className="bg-gradient-to-r from-neon-cyan to-electric-indigo bg-clip-text text-transparent">
-                GitHub Repositories
-              </span>
-            </h2>
-
-            {githubLoading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="w-16 h-16 border-4 border-neon-cyan border-t-transparent rounded-full animate-spin" />
-              </div>
-            ) : (
-              <>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                  {repos.map((repo, index) => (
-                    <GitHubRepoCard key={repo.id} repo={repo} index={index} />
-                  ))}
-                </div>
-
-                <div className="text-center">
-                  <NeonButton
-                    as="a"
-                    href={`https://github.com/${GITHUB_USERNAME}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="ghost"
-                    size="lg"
-                  >
-                    <span className="flex items-center gap-2">
-                      View All Repositories
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </span>
-                  </NeonButton>
-                </div>
-              </>
-            )}
           </motion.div>
         </div>
       </section>
@@ -298,8 +277,30 @@ function App() {
                   rows={5}
                 />
 
-                <NeonButton type="submit" variant="primary" size="lg" fullWidth>
-                  {submitted ? "✓ Message Sent!" : "Send Message"}
+                <NeonButton
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                  disabled={isSubmitting}
+                >
+                  <motion.span
+                    key={isSubmitting ? "sending" : "idle"}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.25 }}
+                    className="inline-flex items-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <span className="animate-pulse">Sending</span>
+                        <span className="font-mono">•••</span>
+                      </>
+                    ) : (
+                      "Send Message"
+                    )}
+                  </motion.span>
                 </NeonButton>
               </form>
 
@@ -389,7 +390,7 @@ function App() {
                     <div>
                       <p className="font-bold text-white">Location</p>
                       <p className="text-sm text-slate-400">
-                        Savarkundla, Gujarat, India
+                        Ahmedabad, Gujarat, India
                       </p>
                     </div>
                   </div>
@@ -407,8 +408,7 @@ function App() {
             Designed and built with passion by Dishant Chauhan
           </p>
           <p className="text-sm text-slate-500 font-mono">
-            © 2026 All rights reserved • Powered by React + TypeScript +
-            Tailwind CSS
+            © 2026 All rights reserved • Powered by @Dishant Chauhan
           </p>
         </div>
       </footer>
